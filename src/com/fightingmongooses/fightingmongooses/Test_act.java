@@ -6,9 +6,17 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
 public class Test_act extends Activity {
+	
+	private void setText(int id, String text)
+	{
+		TextView t = (TextView)findViewById(id);
+		t.setText(text);
+	}
+	
 	
 	@SuppressLint("NewApi")
 	@Override
@@ -20,6 +28,9 @@ public class Test_act extends Activity {
 			// Show the Up button in the action bar.
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
+		
+		setText(R.id.con_name, "test convention");
+		setText(R.id.con_date, "test convention date");
 	}
 
 	@Override
