@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.fightingmongooses.fightingmongooses.Test_act"
+            android:label="@string/title_activity_test_act"
+            android:parentActivityName="com.fightingmongooses.fightingmongooses.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.fightingmongooses.fightingmongooses.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

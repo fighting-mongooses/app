@@ -4,11 +4,55 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="gfdgdgdgfd" />
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+    
+		<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="vertical"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    >
+	
+	    <Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="click me"
+	    android:onClick="testClicked"
+	    />
+	    <Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Button 2"
+	    />
+	    <Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Button 3"
+	    />
+	    <Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Button 4"
+	    />
+	    <Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Button 5"
+	    />
+	     <Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Button 6"
+	    />
+	      <Button
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Button 7"
+	    />
+		</LinearLayout>
+	</ScrollView>
 
 </RelativeLayout>
