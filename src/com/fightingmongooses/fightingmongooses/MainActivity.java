@@ -26,4 +26,11 @@ public class MainActivity extends Activity {
     	Intent intent = new Intent(this, Test_act.class);
     	startActivity(intent);
     }
+    
+    public void upDateDBClicked(View view)
+    {
+    	Intent intent = new Intent(this, UpdateDBActivity.class);
+    	startActivity(intent);
+    }
+    
 }

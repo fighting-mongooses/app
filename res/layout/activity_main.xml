@@ -3,7 +3,7 @@
     android:layout_height="wrap_content" >
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+        
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
@@ -11,13 +11,14 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:onClick="testClicked"
-            android:text="click me" />
+            android:onClick="upDateDBClicked"
+            android:text="update local db" />
 
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Button 2" />
+            android:onClick="testClicked"
+            android:text="click me" />
 
         <Button
             android:layout_width="fill_parent"
