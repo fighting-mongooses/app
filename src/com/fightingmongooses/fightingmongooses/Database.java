@@ -15,7 +15,7 @@ import android.util.Log;
 
 public class Database{
 	/* these variables are never going to change*/
-	public static final String KEY_ROWID ="_id";// this variable is going to give us the row id, everytime we put something in our data base its going to create a row 0,1,2,3..n
+	public static final String KEY_ROWID ="_id";// this variable is going to give us the row id, every time we put something in our data base its going to create a row 0,1,2,3..n
 	public static final String KEY_NAME ="name";
 	public static final String KEY_DATE ="date";
 	public static final String KEY_PLACE ="place";
@@ -26,7 +26,7 @@ public class Database{
 	public static final String KEY_END_DATE ="end_date";
 	public static final String KEY_CONFERENCE="conference";
 	
-	/*only this class can access these variables*/
+	/* only this class can access these variables*/
 	private static final String DATABASE_NAME = "androkon_database"; // data base name is going to reference our database
 	private static final String EVENT_TABLE = "event_table";// in our database we can store different tables such as "Share_table"
 	private static final String CONFERENCE_TABLE = "conference_table";
@@ -47,7 +47,7 @@ public class Database{
 		/* implement methods from SQLiteOpenHelper */
 		@Override
 		/* the first time we ever call a database is the only time this onCreate method is called, this accesses database 
-		and excutes sql code*/
+		and executes sql code*/
 		public void onCreate(SQLiteDatabase db){
 			db.execSQL("CREATE TABLE " + CONFERENCE_TABLE + "( " +
 					KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +  // adding in columns first is integer thats going to increment automatically
@@ -55,8 +55,6 @@ public class Database{
 					KEY_DESCRIPTION + " TEXT NOT NULL, " +
 					KEY_START_DATE+ " DATE NOT NULL, " +
 					KEY_END_DATE+ " DATE NOT NULL);"); 
-			Log.i("SQL", "Table created");
-			
 			
 			db.execSQL("CREATE TABLE " + EVENT_TABLE + "( " +
 					KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +  // adding in columns first is integer thats going to increment automatically
@@ -67,35 +65,7 @@ public class Database{
 					KEY_DESCRIPTION +" TEXT NOT NULL, "+
 					KEY_TIME +" TEXT NOT NULL, "+
 					KEY_CONFERENCE+" INTEGER, "+
-					 " FOREIGN KEY ("+KEY_CONFERENCE+") REFERENCES "+CONFERENCE_TABLE+" ("+KEY_ROWID+"));"); 
-			Log.i("SQL", "Table created");
-			
-			/*ContentValues test = new ContentValues();
-			test.put(KEY_NAME, "name--");
-			test.put(KEY_DESCRIPTION, "desc--");
-			test.put(KEY_START_DATE, "start--");
-			test.put(KEY_END_DATE, "end--");
-			db.insert(CONFERENCE_TABLE, null, test);*/
-			
-			/*ContentValues initialValues = new ContentValues();
-			initialValues.put(KEY_NAME, "Trinity Lovers Association");
-			initialValues.put(KEY_DESCRIPTION, "Trinity lovers engage in lovers events ");
-		    initialValues.put(KEY_START_DATE, "29-02-13");
-		    initialValues.put(KEY_END_DATE, "03-03-13");
-		    db.insert(EVENT_TABLE, null, initialValues);
-		    Log.i("SQL", "Insert");
-		    
-			initialValues = new ContentValues();
-			initialValues.put(KEY_NAME, "Trinity Lovers introduction event");
-		    initialValues.put(KEY_DATE, "29-02-12");
-		    initialValues.put(KEY_PLACE, "House 6");
-		    initialValues.put(KEY_DURATION, "1 hour");
-		    initialValues.put(KEY_DESCRIPTION, "Lets not stand unceremony here");
-		    initialValues.put(KEY_TIME, "09-00am");
-		    db.insert(EVENT_TABLE, null, initialValues);
-		    Log.i("SQL", "Insert");*/
-		    
-		        
+					 " FOREIGN KEY ("+KEY_CONFERENCE+") REFERENCES "+CONFERENCE_TABLE+" ("+KEY_ROWID+"));"); 		        
 		}
 		
 		/* if our table exists then we are going to drop it then call our onCreate method*/
@@ -287,8 +257,6 @@ public class Database{
 		return result;
 	}
 	
-	
-	
 	public String getALLDataFromEventTable(){	
 		String[] columns = new String[]{KEY_ROWID,KEY_NAME, KEY_DATE, KEY_PLACE, KEY_DURATION, KEY_DESCRIPTION, KEY_TIME};
 		Cursor c = ourDatabase.query(EVENT_TABLE, columns, null, null,null,null ,null);
@@ -302,9 +270,9 @@ public class Database{
 		int itime = c.getColumnIndex(KEY_TIME);
 		String result="";
 		while(c.moveToNext()){
-		result = result + c.getString(iRow)+ " " + c.getString(iName) + " "+ c.getString(idate) + " "+ c.getString(iplace) + " "+ c.getString(iduration) + " " + c.getString(idescription) + " "+ c.getString(itime);
-	
-	
+			result = result + c.getString(iRow)+ " " + c.getString(iName) + " "+
+					 c.getString(idate) + " "+ c.getString(iplace) + " "+ c.getString(iduration) 
+					 + " " + c.getString(idescription) + " "+ c.getString(itime);
 		}
 	
 		return result;
