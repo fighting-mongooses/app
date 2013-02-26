@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 public class UpdateDBActivity extends Activity {
 	
-	String appHost = "http://10.0.2.2:8000";
+	String appHost = "http://10.0.2.2:8000"; // This will always resolve to the computer running the android emulator
 	
 	private void setText(int id, String text)
 	{
