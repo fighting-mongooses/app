@@ -194,6 +194,7 @@ public class Database{
 	
 		Cursor c = ourDatabase.query(CONFERENCE_TABLE, null, null, null, null, null, null);
 	
+		int iId = c.getColumnIndex(KEY_ROWID);
 		int iName = c.getColumnIndex(KEY_NAME);
 		int iDesc = c.getColumnIndex(KEY_DESCRIPTION);
 		int iStart = c.getColumnIndex(KEY_START_DATE);
@@ -204,8 +205,8 @@ public class Database{
 		int rowcount = 0;
 		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
-			return_conference[rowcount] = new Conference(c.getString(iName), c.getString(iDesc), 
-					                                     parseSQLDate(c.getString(iStart)),
+			return_conference[rowcount] = new Conference(Integer.parseInt(c.getString(iId)), c.getString(iName),
+					                                     c.getString(iDesc), parseSQLDate(c.getString(iStart)),
 					                                     parseSQLDate(c.getString(iEnd)));
 		    rowcount++;
 		}
@@ -218,6 +219,7 @@ public class Database{
 	
 		Cursor c = ourDatabase.query(EVENT_TABLE, null, null, null, null, null, null);
 	
+		int iId = c.getColumnIndex(KEY_ROWID);
 		int iName = c.getColumnIndex(KEY_NAME);
 		int iDate = c.getColumnIndex(KEY_DATE);
 		int iPlace = c.getColumnIndex(KEY_PLACE);
@@ -229,7 +231,8 @@ public class Database{
 		int rowcount = 0;
 		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
-			return_events[rowcount] = new ConEvent(c.getString(iName), parseSQLDate(c.getString(iDate)), c.getString(iPlace), 
+			return_events[rowcount] = new ConEvent(Integer.parseInt(c.getString(iId)), c.getString(iName), 
+					                               parseSQLDate(c.getString(iDate)), c.getString(iPlace), 
 												   c.getString(iDur), c.getString(iDesc));
 		    rowcount++;
 		}
