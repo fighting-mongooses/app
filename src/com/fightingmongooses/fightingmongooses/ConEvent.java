@@ -1,14 +1,16 @@
 package com.fightingmongooses.fightingmongooses;
 
+import java.util.Date;
+
 public class ConEvent {
 	public String name;
-	public String date;
+	public Date date;
 	public String place;
 	public String duration;
 	public String description;
 
 
-	public ConEvent(String _name, String _date, String _place, String _duration, String _description){
+	public ConEvent(String _name, Date _date, String _place, String _duration, String _description){
 		name = _name; description = _description; date = _date; place = _place; duration = _duration;
 	}
 	

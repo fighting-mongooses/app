@@ -1,4 +1,9 @@
 package com.fightingmongooses.fightingmongooses;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -27,6 +32,7 @@ public class Database{
 	private static final String CONFERENCE_TABLE = "conference_table";
 	private static final int DATABASE_VERSION = 1;// to give the database a version, to allow updates
 	
+	
 	private DbHelper ourHelper;
 	private final Context ourContext;
 	private SQLiteDatabase ourDatabase; // reference database class
@@ -47,15 +53,15 @@ public class Database{
 					KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +  // adding in columns first is integer thats going to increment automatically
 					KEY_NAME + " TEXT NOT NULL, " +
 					KEY_DESCRIPTION + " TEXT NOT NULL, " +
-					KEY_START_DATE+ " TEXT NOT NULL, " +
-					KEY_END_DATE+ " TEXT NOT NULL);"); 
+					KEY_START_DATE+ " DATE NOT NULL, " +
+					KEY_END_DATE+ " DATE NOT NULL);"); 
 			Log.i("SQL", "Table created");
 			
 			
 			db.execSQL("CREATE TABLE " + EVENT_TABLE + "( " +
 					KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +  // adding in columns first is integer thats going to increment automatically
 					KEY_NAME + " TEXT NOT NULL, " +
-					KEY_DATE+ " TEXT NOT NULL, " +
+					KEY_DATE+ " DATE NOT NULL, " +
 					KEY_PLACE+ " TEXT NOT NULL, "+
 					KEY_DURATION +" TEXT NOT NULL, " +
 					KEY_DESCRIPTION +" TEXT NOT NULL, "+
@@ -124,13 +130,48 @@ public class Database{
 	public void close(){
 		ourHelper.close();
 	}
+
+	@SuppressLint("SimpleDateFormat")
+	private static final SimpleDateFormat DJANGOdateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	@SuppressLint("SimpleDateFormat")
+	private static final SimpleDateFormat SQLdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	public static Date parseSQLDate(String d)
+	{
+		Date retval = null;
+		try {
+			retval = SQLdateFormat.parse(d);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return retval;
+	}
+	public static Date parseDjangoDate(String d)
+	{
+		// Ignore Time Zone info - all times are in local time of con location
+		if(!d.endsWith("Z")){
+			int i;
+			for(i = d.length(); i != -1 && d.charAt(i) != '+' && d.charAt(i) != '-'; i++);
+			d = d.substring(0, i);	
+		}
+		
+		Date retval = null;
+		
+		try {
+			retval = DJANGOdateFormat.parse(d);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		return retval;
+	}
 	
 	public long createConferenceEntry(String con_name, String con_description, String con_start_date, String con_end_date){
 		 ContentValues cv = new ContentValues();
 		 cv.put(KEY_NAME, con_name); // put stuff in like a bundle to finalise it before its placed in the table
 		 cv.put(KEY_DESCRIPTION, con_description ); //cv.put(where we want to save it in our data base, our value we wish to store);
-		 cv.put(KEY_START_DATE, con_start_date);
-		 cv.put(KEY_END_DATE, con_end_date);
+		 cv.put(KEY_START_DATE, SQLdateFormat.format(parseDjangoDate(con_start_date)));
+		 cv.put(KEY_END_DATE, SQLdateFormat.format(parseDjangoDate(con_end_date)));
 		 return ourDatabase.insert(CONFERENCE_TABLE, null, cv); // inserts our puts into table
 	}
 	
@@ -138,13 +179,14 @@ public class Database{
 	public long createEventEntry(String event_name, String event_date, String event_place, String event_duration, String event_description, String event_time){
 		ContentValues cv = new ContentValues();
 		cv.put(KEY_NAME, event_name); // put stuff in like a bundle to finalise it before its placed in the table
-		cv.put(KEY_DATE, event_date ); //cv.put(where we want to save it in our data base, our value we wish to store);
+		cv.put(KEY_DATE, SQLdateFormat.format(parseDjangoDate(event_date))); //cv.put(where we want to save it in our data base, our value we wish to store);
 		cv.put(KEY_PLACE, event_place);
 		cv.put(KEY_DURATION, event_duration);
 		cv.put(KEY_DESCRIPTION, event_description);
 		cv.put(KEY_TIME, event_time);
 		return ourDatabase.insert(EVENT_TABLE, null, cv); // inserts our puts into table
 	}
+	
 	
 	
 	public Conference[] returnConference(){
@@ -163,7 +205,8 @@ public class Database{
 		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
 			return_conference[rowcount] = new Conference(c.getString(iName), c.getString(iDesc), 
-					                                     c.getString(iStart), c.getString(iEnd));
+					                                     parseSQLDate(c.getString(iStart)),
+					                                     parseSQLDate(c.getString(iEnd)));
 		    rowcount++;
 		}
 	
@@ -186,7 +229,7 @@ public class Database{
 		int rowcount = 0;
 		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
-			return_events[rowcount] = new ConEvent(c.getString(iName), c.getString(iDate), c.getString(iPlace), 
+			return_events[rowcount] = new ConEvent(c.getString(iName), parseSQLDate(c.getString(iDate)), c.getString(iPlace), 
 												   c.getString(iDur), c.getString(iDesc));
 		    rowcount++;
 		}
