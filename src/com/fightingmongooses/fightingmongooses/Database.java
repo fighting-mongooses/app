@@ -64,12 +64,12 @@ public class Database{
 					 " FOREIGN KEY ("+KEY_CONFERENCE+") REFERENCES "+CONFERENCE_TABLE+" ("+KEY_ROWID+"));"); 
 			Log.i("SQL", "Table created");
 			
-			ContentValues test = new ContentValues();
+			/*ContentValues test = new ContentValues();
 			test.put(KEY_NAME, "name--");
 			test.put(KEY_DESCRIPTION, "desc--");
 			test.put(KEY_START_DATE, "start--");
 			test.put(KEY_END_DATE, "end--");
-			db.insert(CONFERENCE_TABLE, null, test);
+			db.insert(CONFERENCE_TABLE, null, test);*/
 			
 			/*ContentValues initialValues = new ContentValues();
 			initialValues.put(KEY_NAME, "Trinity Lovers Association");
@@ -113,7 +113,7 @@ public class Database{
 		ourHelper = new DbHelper(ourContext); // give a new instance of that object through ourContext
 		ourDatabase = ourHelper.getWritableDatabase(); // going to open up data base through our helper
 		
-		ourHelper.onUpgrade(ourDatabase, 1, 1); // TODO Remove this, it's just clearing each time for testing
+		//ourHelper.onUpgrade(ourDatabase, 1, 1); // TODO Remove this, it's just clearing each time for testing
 		
 		return this;
 	}
@@ -144,34 +144,47 @@ public class Database{
 	}
 	
 	
-	public String[] returnConference(){
-		String[] con_temp = new String[]{KEY_NAME};
+	public Conference[] returnConference(){
+		//String[] con_temp = new String[]{KEY_NAME, KEY_};
 	
-		Cursor c = ourDatabase.query(CONFERENCE_TABLE, con_temp, null, null, null, null, null);
+		Cursor c = ourDatabase.query(CONFERENCE_TABLE, null, null, null, null, null, null);
 	
 		int iName = c.getColumnIndex(KEY_NAME);
+		int iDesc = c.getColumnIndex(KEY_DESCRIPTION);
+		int iStart = c.getColumnIndex(KEY_START_DATE);
+		int iEnd = c.getColumnIndex(KEY_END_DATE);
+		
+		Conference[] return_conference = new Conference[c.getCount()];
+		
 		int rowcount = 0;
-		  String[] return_conference = new String[c.getCount()];
 		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
-			return_conference[rowcount] = c.getString(iName);
+			return_conference[rowcount] = new Conference(c.getString(iName), c.getString(iDesc), 
+					                                     c.getString(iStart), c.getString(iEnd));
 		    rowcount++;
 		}
 	
 		return return_conference;	
 	}
 	
-	public String[] returnEvents(){
-		String[] event_temp = new String[]{KEY_NAME};
+	public ConEvent[] returnEvents(){
+		//String[] event_temp = new String[]{KEY_NAME};
 	
-		Cursor c = ourDatabase.query(EVENT_TABLE, event_temp, null, null, null, null, null);
+		Cursor c = ourDatabase.query(EVENT_TABLE, null, null, null, null, null, null);
 	
 		int iName = c.getColumnIndex(KEY_NAME);
+		int iDate = c.getColumnIndex(KEY_DATE);
+		int iPlace = c.getColumnIndex(KEY_PLACE);
+		int iDur = c.getColumnIndex(KEY_DURATION);
+		int iDesc = c.getColumnIndex(KEY_DESCRIPTION);
+	
+		ConEvent[] return_events = new ConEvent[c.getCount()];
+		
 		int rowcount = 0;
-		  String[] return_events = new String[c.getCount()];
 		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
 		{
-			return_events[rowcount] = c.getString(iName);
+			return_events[rowcount] = new ConEvent(c.getString(iName), c.getString(iDate), c.getString(iPlace), 
+												   c.getString(iDur), c.getString(iDesc));
 		    rowcount++;
 		}
 	
