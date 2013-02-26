@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class UpdateDBActivity extends Activity {
@@ -61,11 +63,13 @@ public class UpdateDBActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
+		Database db = null;
+		
 		try {
 			rootArray = new JSONArray(json);
 
-			Database db = new Database(this);
+			db = new Database(this);
 			db.open();
 
 			db.clear();
@@ -100,6 +104,8 @@ public class UpdateDBActivity extends Activity {
 			for (int i = 0; i < cons.length; i++) {
 				test += cons[i] + "\n";
 				Log.i("ASD", cons[i].toString());
+				
+				MainActivity.mainptr.addButton(cons[i].name);
 			}
 			setText(R.id.test, test);
 
@@ -107,6 +113,8 @@ public class UpdateDBActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		db.close();
 
 	}
 
