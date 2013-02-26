@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.support.v4.app.NavUtils;
 
-public class Test_act extends Activity {
+public class ViewConAct extends Activity {
 	
 	private void setText(int id, String text)
 	{
@@ -22,15 +22,15 @@ public class Test_act extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_test_act);
+		setContentView(R.layout.activity_view_con);
 		
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 			// Show the Up button in the action bar.
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		
-		setText(R.id.con_name, "test convention");
-		setText(R.id.con_date, "test convention date");
+		setText(R.id.example_text, "ID: " + getIntent().getExtras().getInt("id"));
+		//setText(R.id.con_date, "test convention date");
 	}
 
 	@Override

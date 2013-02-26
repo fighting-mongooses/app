@@ -14,12 +14,6 @@
             android:onClick="upDateDBClicked"
             android:text="update local db" />
 
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:onClick="testClicked"
-            android:text="click me" />
-
     </LinearLayout>
 
 </ScrollView>

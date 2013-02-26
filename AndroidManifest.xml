@@ -25,8 +25,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fightingmongooses.fightingmongooses.Test_act"
-            android:label="@string/title_activity_test_act"
+            android:name="com.fightingmongooses.fightingmongooses.ViewConAct"
+            android:label="@string/title_view_con_act"
             android:parentActivityName="com.fightingmongooses.fightingmongooses.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

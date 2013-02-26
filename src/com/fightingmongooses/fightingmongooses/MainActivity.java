@@ -34,26 +34,41 @@ public class MainActivity extends Activity {
         db.close();
         
 		for(int i = 0; i < cons.length; i++) 
-			this.addButton(cons[i].name);	
+			this.addConButton(cons[i]);	
     }
     
-    public void addButton(String text)
+    private class ConOnClickListener implements View.OnClickListener{
+    	public int con_id;
+		
+		@Override
+		public void onClick(View v) {
+			conClicked(v, con_id);	
+		}
+    }
+    
+    public void conClicked(View view, int id)
+    {
+    	Intent intent = new Intent(this, ViewConAct.class);
+    	intent.putExtra("id", id);
+    	startActivity(intent);
+    }
+    
+    public void addConButton(Conference con)
     {
 	    Button b = new Button(this);
-		b.setText(text);
+		b.setText(con.name);
+		
+		ConOnClickListener click = new ConOnClickListener();
+		click.con_id = con.id;
+		
+		b.setOnClickListener(click);
+		
 		LinearLayout ll = (LinearLayout)findViewById(R.id.main_layout);
 		
 		@SuppressWarnings("deprecation") // FILL_PARENT is deprecated since API level 8, but we're targeting 7
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 		ll.addView(b, lp);
-    }
-    
-    public void testClicked(View view)
-    {
-    	Intent intent = new Intent(this, Test_act.class);
-    	startActivity(intent);
-
     }
     
     public void upDateDBClicked(View view)
