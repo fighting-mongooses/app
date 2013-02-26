@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
@@ -63,6 +64,9 @@ public class UpdateDBActivity extends Activity {
 		try {
 			rootArray = new JSONArray(json);
 			
+			Database db = new Database(this);
+			db.open();
+			
 			String test = "";
 			for(int i = 0; i < rootArray.length(); i++)
 			{				
@@ -73,10 +77,28 @@ public class UpdateDBActivity extends Activity {
 					test += "Description: " + con.getString("description") + '\n';
 					test += "Start Date: " + con.getString("start_date") + '\n';
 					test += "End Date: " + con.getString("end_date") + "\n\n";
+					
+					db.createConferenceEntry(con.getString("name"), con.getString("description"),
+							                 con.getString("start_date"), con.getString("end_date"));
 				
 			}
 			
+			//setText(R.id.test, test);
+//
+			//db.createConferenceEntry("test name", "test conf desc", "start", "end");
+			//db.returnConference();
+			//setText(R.id.test, db.returnConference()[0].toString());
+			
+			//db.createConferenceEntry("AAA", "BBB", "CCC", "DDD");
+			
+			test = "";
+			Conference cons[] = db.returnConference();
+			for(int i = 0; i < cons.length; i++){
+				test += cons[i] + "\n";
+				Log.i("ASD", cons[i].toString());
+			}
 			setText(R.id.test, test);
+			
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
