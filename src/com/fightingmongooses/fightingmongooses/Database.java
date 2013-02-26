@@ -112,10 +112,13 @@ public class Database{
 	public Database open() throws SQLException{
 		ourHelper = new DbHelper(ourContext); // give a new instance of that object through ourContext
 		ourDatabase = ourHelper.getWritableDatabase(); // going to open up data base through our helper
-		
-		//ourHelper.onUpgrade(ourDatabase, 1, 1); // TODO Remove this, it's just clearing each time for testing
-		
+
 		return this;
+	}
+	
+	public void clear()
+	{
+		ourHelper.onUpgrade(ourDatabase, 0, 0);
 	}
 	
 	public void close(){
