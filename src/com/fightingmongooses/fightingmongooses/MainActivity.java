@@ -9,13 +9,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 public class MainActivity extends Activity {
-	public static MainActivity mainptr;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainptr = this;
+        
+        createButtons();
     }
 
     @Override
@@ -23,6 +23,30 @@ public class MainActivity extends Activity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
+    }
+    
+    public void createButtons(){
+    	Database db = new Database(this);
+        db.open();
+        
+        Conference cons[] = db.returnConference();
+        
+        db.close();
+        
+		for(int i = 0; i < cons.length; i++) 
+			this.addButton(cons[i].name);	
+    }
+    
+    public void addButton(String text)
+    {
+	    Button b = new Button(this);
+		b.setText(text);
+		LinearLayout ll = (LinearLayout)findViewById(R.id.main_layout);
+		
+		@SuppressWarnings("deprecation") // FILL_PARENT is deprecated since API level 8, but we're targeting 7
+		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+		ll.addView(b, lp);
     }
     
     public void testClicked(View view)
@@ -36,16 +60,5 @@ public class MainActivity extends Activity {
     {
     	Intent intent = new Intent(this, UpdateDBActivity.class);
     	startActivity(intent);
-    }
-    
-    public void addButton(String text)
-    {
-	    Button b = new Button(this);
-		b.setText(text);
-		LinearLayout ll = (LinearLayout)findViewById(R.id.main_layout);
-		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-		ll.addView(b, lp);
-    }
-    
+    }    
 }

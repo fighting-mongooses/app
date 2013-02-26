@@ -15,8 +15,6 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class UpdateDBActivity extends Activity {
@@ -64,48 +62,28 @@ public class UpdateDBActivity extends Activity {
 			e.printStackTrace();
 		}
 		
-		Database db = null;
+		Database db =  new Database(this);
+		db.open();
 		
 		try {
 			rootArray = new JSONArray(json);
 
-			db = new Database(this);
-			db.open();
-
 			db.clear();
 
-			String test = "";
 			for (int i = 0; i < rootArray.length(); i++) {
 				JSONObject con = rootArray.getJSONObject(i);
 				con = con.getJSONObject("fields");
 
-				test += "Name: " + con.getString("name") + '\n';
-				test += "Description: " + con.getString("description") + '\n';
-				test += "Start Date: " + con.getString("start_date") + '\n';
-				test += "End Date: " + con.getString("end_date") + "\n\n";
-
 				db.createConferenceEntry(con.getString("name"),
 						con.getString("description"),
 						con.getString("start_date"), con.getString("end_date"));
-
 			}
 
-			// setText(R.id.test, test);
-			//
-			// db.createConferenceEntry("test name", "test conf desc", "start",
-			// "end");
-			// db.returnConference();
-			// setText(R.id.test, db.returnConference()[0].toString());
-
-			// db.createConferenceEntry("AAA", "BBB", "CCC", "DDD");
-
-			test = "";
+			String test = "";
 			Conference cons[] = db.returnConference();
 			for (int i = 0; i < cons.length; i++) {
 				test += cons[i] + "\n";
 				Log.i("ASD", cons[i].toString());
-				
-				MainActivity.mainptr.addButton(cons[i].name);
 			}
 			setText(R.id.test, test);
 
