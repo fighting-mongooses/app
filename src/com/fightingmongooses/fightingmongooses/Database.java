@@ -92,15 +92,16 @@ public class Database{
 		return this;
 	}
 	
+	public void close(){
+		ourHelper.close();
+	}
+	
 	public void clear()
 	{
 		cons = null;
 		ourHelper.onUpgrade(ourDatabase, 0, 0);
 	}
 	
-	public void close(){
-		ourHelper.close();
-	}
 
 	@SuppressLint("SimpleDateFormat")
 	private static final SimpleDateFormat DJANGOdateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -160,12 +161,8 @@ public class Database{
 	
 	private Conference[] cons = null;
 	public Conference getCon(int id){
-	
-		if(cons == null){
-			open();
-			returnConference();
-			close();
-		}
+		
+		returnConference(); // This makes sure cons is up to date
 		
 		for(int i = 0; i != cons.length; i++)
 			if(cons[i].id == id)
@@ -176,6 +173,9 @@ public class Database{
 	
 	public Conference[] returnConference(){
 		//String[] con_temp = new String[]{KEY_NAME, KEY_};
+		
+		if(cons != null)
+			return cons;
 	
 		Cursor c = ourDatabase.query(CONFERENCE_TABLE, null, null, null, null, null, null);
 	

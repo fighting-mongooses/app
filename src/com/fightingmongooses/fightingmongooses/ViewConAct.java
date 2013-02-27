@@ -30,8 +30,9 @@ public class ViewConAct extends Activity {
 		}
 		
 		Database db = new Database(this);
+		db.open();
 		setText(R.id.example_text, "" + db.getCon(getIntent().getExtras().getInt("id")));
-		//setText(R.id.con_date, "test convention date");
+		db.close();
 	}
 
 	@Override
