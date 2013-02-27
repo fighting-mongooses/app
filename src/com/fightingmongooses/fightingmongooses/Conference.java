@@ -1,5 +1,7 @@
 package com.fightingmongooses.fightingmongooses;
 
+import android.annotation.SuppressLint;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Conference {
@@ -13,8 +15,11 @@ public class Conference {
 		id = _id; name = _name; description = _description; start = _start; end = _end;
 	}
 	
+	@SuppressLint("SimpleDateFormat")
 	public String toString()
 	{
-		return "ID: " + id + ", Name: " + name + ", Description: " + description + ", Start: " + start + ", End: " + end;
+		SimpleDateFormat f = new SimpleDateFormat("MMM/dd/yy HH:mm");
+		return "ID: " + id + ", Name: " + name + ", Description: " + description + 
+				", Start: " + f.format(start) + ", End: " + f.format(end);
 	}
 }

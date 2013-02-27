@@ -94,6 +94,7 @@ public class Database{
 	
 	public void clear()
 	{
+		cons = null;
 		ourHelper.onUpgrade(ourDatabase, 0, 0);
 	}
 	
@@ -157,7 +158,21 @@ public class Database{
 		return ourDatabase.insert(EVENT_TABLE, null, cv); // inserts our puts into table
 	}
 	
+	private Conference[] cons = null;
+	public Conference getCon(int id){
 	
+		if(cons == null){
+			open();
+			returnConference();
+			close();
+		}
+		
+		for(int i = 0; i != cons.length; i++)
+			if(cons[i].id == id)
+				return cons[i];
+		
+		return null;
+	}
 	
 	public Conference[] returnConference(){
 		//String[] con_temp = new String[]{KEY_NAME, KEY_};
@@ -180,7 +195,8 @@ public class Database{
 					                                     parseSQLDate(c.getString(iEnd)));
 		    rowcount++;
 		}
-	
+		
+		cons = return_conference;
 		return return_conference;	
 	}
 	

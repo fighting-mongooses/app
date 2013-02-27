@@ -29,7 +29,8 @@ public class ViewConAct extends Activity {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		
-		setText(R.id.example_text, "ID: " + getIntent().getExtras().getInt("id"));
+		Database db = new Database(this);
+		setText(R.id.example_text, "" + db.getCon(getIntent().getExtras().getInt("id")));
 		//setText(R.id.con_date, "test convention date");
 	}
 
