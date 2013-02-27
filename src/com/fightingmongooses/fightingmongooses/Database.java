@@ -1,6 +1,7 @@
 package com.fightingmongooses.fightingmongooses;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.annotation.SuppressLint;
@@ -97,6 +98,7 @@ public class Database{
 	public void clear()
 	{
 		cons = null;
+		events = null;
 		ourHelper.onUpgrade(ourDatabase, 0, 0);
 	}
 	
@@ -137,17 +139,23 @@ public class Database{
 	}
 	
 	public long createConferenceEntry(int id, String con_name, String con_description, String con_start_date, String con_end_date){
-		 ContentValues cv = new ContentValues();
-		 cv.put(KEY_ROWID, id);
-		 cv.put(KEY_NAME, con_name); // put stuff in like a bundle to finalise it before its placed in the table
-		 cv.put(KEY_DESCRIPTION, con_description ); //cv.put(where we want to save it in our data base, our value we wish to store);
-		 cv.put(KEY_START_DATE, SQLdateFormat.format(parseDjangoDate(con_start_date)));
-		 cv.put(KEY_END_DATE, SQLdateFormat.format(parseDjangoDate(con_end_date)));
-		 return ourDatabase.insert(CONFERENCE_TABLE, null, cv); // inserts our puts into table
+		cons = null;
+		events = null; 
+		
+		ContentValues cv = new ContentValues();
+		cv.put(KEY_ROWID, id);
+		cv.put(KEY_NAME, con_name); // put stuff in like a bundle to finalise it before its placed in the table
+		cv.put(KEY_DESCRIPTION, con_description ); //cv.put(where we want to save it in our data base, our value we wish to store);
+		cv.put(KEY_START_DATE, SQLdateFormat.format(parseDjangoDate(con_start_date)));
+		cv.put(KEY_END_DATE, SQLdateFormat.format(parseDjangoDate(con_end_date)));
+		return ourDatabase.insert(CONFERENCE_TABLE, null, cv); // inserts our puts into table
 	}
 	
 	/* write to data base */
 	public long createEventEntry(int id, String event_name, String event_date, String event_place, String event_duration, String event_description, int conference){
+		cons = null;
+		events = null;
+		
 		ContentValues cv = new ContentValues();
 		cv.put(KEY_ROWID, id);
 		cv.put(KEY_NAME, event_name); // put stuff in like a bundle to finalise it before its placed in the table
@@ -200,8 +208,24 @@ public class Database{
 		return return_conference;	
 	}
 	
+	private ConEvent[] events = null;
+	public ConEvent[] getConEvents(int conId){
+		returnEvents();
+		
+		ArrayList<ConEvent> conEvents = new ArrayList<ConEvent>();
+		for(int i = 0; i != events.length; i++){
+			if(events[i].con == conId)
+				conEvents.add(events[i]);
+		}
+		
+		return conEvents.toArray(new ConEvent[conEvents.size()]);
+	}
+	
 	public ConEvent[] returnEvents(){
 		//String[] event_temp = new String[]{KEY_NAME};
+		
+		if(events != null)
+			return events;
 	
 		Cursor c = ourDatabase.query(EVENT_TABLE, null, null, null, null, null, null);
 	
@@ -211,6 +235,7 @@ public class Database{
 		int iPlace = c.getColumnIndex(KEY_PLACE);
 		int iDur = c.getColumnIndex(KEY_DURATION);
 		int iDesc = c.getColumnIndex(KEY_DESCRIPTION);
+		int iCon = c.getColumnIndex(KEY_CONFERENCE);
 	
 		ConEvent[] return_events = new ConEvent[c.getCount()];
 		
@@ -219,10 +244,13 @@ public class Database{
 		{
 			return_events[rowcount] = new ConEvent(Integer.parseInt(c.getString(iId)), c.getString(iName), 
 					                               parseSQLDate(c.getString(iDate)), c.getString(iPlace), 
-												   c.getString(iDur), c.getString(iDesc));
+												   c.getString(iDur), c.getString(iDesc),
+												   Integer.parseInt(c.getString(iCon)));
 		    rowcount++;
 		}
 	
+		events = return_events;
+		
 		return return_events;	
 	}
 	

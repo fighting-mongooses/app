@@ -29,10 +29,20 @@ public class ViewConAct extends Activity {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 		
+		int conId = getIntent().getExtras().getInt("id");
+		
 		Database db = new Database(this);
 		db.open();
-		setText(R.id.example_text, "" + db.getCon(getIntent().getExtras().getInt("id")));
+		
+		String text = db.getCon(conId) + "\nEvents:\n";
+		ConEvent[] conEvents = db.getConEvents(conId);
+		
 		db.close();
+		
+		for(int i = 0; i != conEvents.length; i++)
+			text += conEvents[i];
+		
+		setText(R.id.example_text, text);
 	}
 
 	@Override
