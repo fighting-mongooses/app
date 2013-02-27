@@ -21,7 +21,6 @@ public class Database{
 	public static final String KEY_PLACE ="place";
 	public static final String KEY_DURATION ="duration";
 	public static final String KEY_DESCRIPTION ="description";
-	public static final String KEY_TIME ="time";
 	public static final String KEY_START_DATE ="start_date";
 	public static final String KEY_END_DATE ="end_date";
 	public static final String KEY_CONFERENCE="conference";
@@ -50,20 +49,19 @@ public class Database{
 		and executes sql code*/
 		public void onCreate(SQLiteDatabase db){
 			db.execSQL("CREATE TABLE " + CONFERENCE_TABLE + "( " +
-					KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +  // adding in columns first is integer thats going to increment automatically
+					KEY_ROWID + " INTEGER PRIMARY KEY NOT NULL, " + // Django provides unique ids
 					KEY_NAME + " TEXT NOT NULL, " +
 					KEY_DESCRIPTION + " TEXT NOT NULL, " +
 					KEY_START_DATE+ " DATE NOT NULL, " +
 					KEY_END_DATE+ " DATE NOT NULL);"); 
 			
 			db.execSQL("CREATE TABLE " + EVENT_TABLE + "( " +
-					KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +  // adding in columns first is integer thats going to increment automatically
+					KEY_ROWID + " INTEGER PRIMARY KEY NOT NULL, " + // Django provides unique ids
 					KEY_NAME + " TEXT NOT NULL, " +
 					KEY_DATE+ " DATE NOT NULL, " +
 					KEY_PLACE+ " TEXT NOT NULL, "+
 					KEY_DURATION +" TEXT NOT NULL, " +
 					KEY_DESCRIPTION +" TEXT NOT NULL, "+
-					KEY_TIME +" TEXT NOT NULL, "+
 					KEY_CONFERENCE+" INTEGER, "+
 					 " FOREIGN KEY ("+KEY_CONFERENCE+") REFERENCES "+CONFERENCE_TABLE+" ("+KEY_ROWID+"));"); 		        
 		}
@@ -138,8 +136,9 @@ public class Database{
 		return retval;
 	}
 	
-	public long createConferenceEntry(String con_name, String con_description, String con_start_date, String con_end_date){
+	public long createConferenceEntry(int id, String con_name, String con_description, String con_start_date, String con_end_date){
 		 ContentValues cv = new ContentValues();
+		 cv.put(KEY_ROWID, id);
 		 cv.put(KEY_NAME, con_name); // put stuff in like a bundle to finalise it before its placed in the table
 		 cv.put(KEY_DESCRIPTION, con_description ); //cv.put(where we want to save it in our data base, our value we wish to store);
 		 cv.put(KEY_START_DATE, SQLdateFormat.format(parseDjangoDate(con_start_date)));
@@ -148,14 +147,15 @@ public class Database{
 	}
 	
 	/* write to data base */
-	public long createEventEntry(String event_name, String event_date, String event_place, String event_duration, String event_description, String event_time){
+	public long createEventEntry(int id, String event_name, String event_date, String event_place, String event_duration, String event_description, int conference){
 		ContentValues cv = new ContentValues();
+		cv.put(KEY_ROWID, id);
 		cv.put(KEY_NAME, event_name); // put stuff in like a bundle to finalise it before its placed in the table
 		cv.put(KEY_DATE, SQLdateFormat.format(parseDjangoDate(event_date))); //cv.put(where we want to save it in our data base, our value we wish to store);
 		cv.put(KEY_PLACE, event_place);
 		cv.put(KEY_DURATION, event_duration);
 		cv.put(KEY_DESCRIPTION, event_description);
-		cv.put(KEY_TIME, event_time);
+		cv.put(KEY_CONFERENCE, conference);
 		return ourDatabase.insert(EVENT_TABLE, null, cv); // inserts our puts into table
 	}
 	
@@ -274,7 +274,7 @@ public class Database{
 	}
 	
 	public String getALLDataFromEventTable(){	
-		String[] columns = new String[]{KEY_ROWID,KEY_NAME, KEY_DATE, KEY_PLACE, KEY_DURATION, KEY_DESCRIPTION, KEY_TIME};
+		String[] columns = new String[]{KEY_ROWID,KEY_NAME, KEY_DATE, KEY_PLACE, KEY_DURATION, KEY_DESCRIPTION};//, KEY_TIME};
 		Cursor c = ourDatabase.query(EVENT_TABLE, columns, null, null,null,null ,null);
 	
 		int iRow = c.getColumnIndex(KEY_ROWID);
@@ -283,12 +283,12 @@ public class Database{
 		int iplace = c.getColumnIndex(KEY_PLACE);
 		int iduration = c.getColumnIndex(KEY_DURATION);
 		int idescription = c.getColumnIndex(KEY_DESCRIPTION);
-		int itime = c.getColumnIndex(KEY_TIME);
+		//int itime = c.getColumnIndex(KEY_TIME);
 		String result="";
 		while(c.moveToNext()){
 			result = result + c.getString(iRow)+ " " + c.getString(iName) + " "+
 					 c.getString(idate) + " "+ c.getString(iplace) + " "+ c.getString(iduration) 
-					 + " " + c.getString(idescription) + " "+ c.getString(itime);
+					 + " " + c.getString(idescription);// + " "+ c.getString(itime);
 		}
 	
 		return result;

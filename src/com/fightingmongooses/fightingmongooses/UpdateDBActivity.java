@@ -27,10 +27,7 @@ public class UpdateDBActivity extends Activity {
 		Database db = null;
 		TextView t = (TextView) findViewById(R.id.test);
 		
-		try {
-			String json = null;
-			JSONArray rootArray = null;
-			
+		try {			
 			URL url = new URL(appHost + "/json_cons");
 			InputStream is = url.openStream();
 
@@ -43,32 +40,62 @@ public class UpdateDBActivity extends Activity {
 				sb.append(line + "\n");
 			}
 			is.close();
-
-			json = sb.toString();
-		
-			db =  new Database(this);
+			
+			JSONArray json_cons = new JSONArray(sb.toString());
+			
+			
+			url = new URL(appHost + "/json_events");
+			is = url.openStream();
+			reader = new BufferedReader(new InputStreamReader(
+					is, "iso-8859-1"), 8);
+			sb = new StringBuilder();
+			line = null;
+			
+			while((line = reader.readLine()) != null)
+			{
+				sb.append(line + "\n");
+			}
+			is.close();
+			
+			JSONArray json_events = new JSONArray(sb.toString());
+			
+			db = new Database(this);
 			db.open();
-		
-			rootArray = new JSONArray(json);
-
 			db.clear();
 
-			for (int i = 0; i < rootArray.length(); i++) {
-				JSONObject con = rootArray.getJSONObject(i);
+			for (int i = 0; i < json_cons.length(); i++) {
+				JSONObject con = json_cons.getJSONObject(i);
+				int id = con.getInt("pk");
 				con = con.getJSONObject("fields");
 
-				db.createConferenceEntry(con.getString("name"),
+				db.createConferenceEntry(id, con.getString("name"),
 						con.getString("description"),
 						con.getString("start_date"), con.getString("end_date"));
 			}
+			
+			for (int i = 0; i < json_events.length(); i++) {
+				JSONObject con = json_events.getJSONObject(i);
+				int id = con.getInt("pk");
+				con = con.getJSONObject("fields");
 
+				db.createEventEntry(id, con.getString("name"), con.getString("time"), "PLACEHOLDER_PLACE",
+						"PLACEHOLDER_DURATION", con.getString("description"), con.getInt("conference"));
+			}
+
+			
 			// Display new cons to user
-			String test = "";
+			String test = "Cons:\n";
 			Conference cons[] = db.returnConference();
 			for (int i = 0; i < cons.length; i++)
 				test += cons[i] + "\n";
 
+			test += "Events:\n";
+			ConEvent events[] = db.returnEvents();
+			for (int i = 0; i < events.length; i++)
+				test += events[i] + "\n";
+
 			t.setText(test);
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
