@@ -54,7 +54,20 @@ public class MainActivity extends Activity {
     	Database db = new Database(this);
         db.open();
         
-        Conference cons[] = db.returnConference();
+        Conference cons[] = null;
+        
+        // Don't spazz when new fields are added to the db
+        try
+        {
+        	cons = db.returnConference();
+        }
+        catch(Exception e)
+        {
+        	db.clear();
+        	cons = db.returnConference();
+        	b.setText("Update Cons (update needed)");
+        }
+        
         
         db.close();
         

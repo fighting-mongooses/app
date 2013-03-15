@@ -25,6 +25,9 @@ public class Database{
 	public static final String KEY_START_DATE ="start_date";
 	public static final String KEY_END_DATE ="end_date";
 	public static final String KEY_CONFERENCE="conference";
+	public static final String KEY_WEBSITE="website";
+	public static final String KEY_GUESTS="guests";
+	public static final String KEY_TWITTER="twitter";
 	
 	/* only this class can access these variables*/
 	private static final String DATABASE_NAME = "androkon_database"; // data base name is going to reference our database
@@ -54,7 +57,11 @@ public class Database{
 					KEY_NAME + " TEXT NOT NULL, " +
 					KEY_DESCRIPTION + " TEXT NOT NULL, " +
 					KEY_START_DATE+ " DATE NOT NULL, " +
-					KEY_END_DATE+ " DATE NOT NULL);"); 
+					KEY_END_DATE+ " DATE NOT NULL, " + 
+					KEY_WEBSITE+ " TEXT NOT NULL, " +
+					KEY_GUESTS+ " TEXT NOT NULL, " +
+					KEY_TWITTER+ " TEXT NOT NULL);"); 
+			
 			
 			db.execSQL("CREATE TABLE " + EVENT_TABLE + "( " +
 					KEY_ROWID + " INTEGER PRIMARY KEY NOT NULL, " + // Django provides unique ids
@@ -138,7 +145,8 @@ public class Database{
 		return retval;
 	}
 	
-	public long createConferenceEntry(int id, String con_name, String con_description, String con_start_date, String con_end_date){
+	public long createConferenceEntry(int id, String con_name, String con_description, 
+			String con_start_date, String con_end_date, String website, String guests, String twitter){
 		cons = null;
 		events = null; 
 		
@@ -148,6 +156,9 @@ public class Database{
 		cv.put(KEY_DESCRIPTION, con_description ); //cv.put(where we want to save it in our data base, our value we wish to store);
 		cv.put(KEY_START_DATE, SQLdateFormat.format(parseDjangoDate(con_start_date)));
 		cv.put(KEY_END_DATE, SQLdateFormat.format(parseDjangoDate(con_end_date)));
+		cv.put(KEY_WEBSITE, website);
+		cv.put(KEY_GUESTS, guests);
+		cv.put(KEY_TWITTER, twitter);
 		return ourDatabase.insert(CONFERENCE_TABLE, null, cv); // inserts our puts into table
 	}
 	
@@ -192,6 +203,9 @@ public class Database{
 		int iDesc = c.getColumnIndex(KEY_DESCRIPTION);
 		int iStart = c.getColumnIndex(KEY_START_DATE);
 		int iEnd = c.getColumnIndex(KEY_END_DATE);
+		int iWebsite = c.getColumnIndex(KEY_WEBSITE);
+		int iGuests = c.getColumnIndex(KEY_GUESTS);
+;		int iTwitter = c.getColumnIndex(KEY_TWITTER);
 		
 		Conference[] return_conference = new Conference[c.getCount()];
 		
@@ -200,7 +214,8 @@ public class Database{
 		{
 			return_conference[rowcount] = new Conference(Integer.parseInt(c.getString(iId)), c.getString(iName),
 					                                     c.getString(iDesc), parseSQLDate(c.getString(iStart)),
-					                                     parseSQLDate(c.getString(iEnd)));
+					                                     parseSQLDate(c.getString(iEnd)), c.getString(iWebsite),
+					                                     c.getString(iGuests), c.getString(iTwitter));
 		    rowcount++;
 		}
 		

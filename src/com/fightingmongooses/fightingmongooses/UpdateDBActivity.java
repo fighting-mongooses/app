@@ -68,9 +68,9 @@ public class UpdateDBActivity extends Activity {
 				int id = con.getInt("pk");
 				con = con.getJSONObject("fields");
 
-				db.createConferenceEntry(id, con.getString("name"),
-						con.getString("description"),
-						con.getString("start_date"), con.getString("end_date"));
+				db.createConferenceEntry(id, con.getString("name"), con.getString("description"),
+						con.getString("start_date"), con.getString("end_date"), 
+						con.getString("website"), con.getString("guests"), con.getString("twitter"));
 			}
 			
 			for (int i = 0; i < json_events.length(); i++) {
