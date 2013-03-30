@@ -114,7 +114,7 @@ public class Database{
 	
 
 	@SuppressLint("SimpleDateFormat")
-	private static final SimpleDateFormat DJANGOdateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	private static final SimpleDateFormat DJANGOdateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	@SuppressLint("SimpleDateFormat")
 	private static final SimpleDateFormat SQLdateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	
