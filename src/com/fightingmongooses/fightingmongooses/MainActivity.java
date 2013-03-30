@@ -94,10 +94,10 @@ public class MainActivity extends Activity {
     public void addConButton(Conference con)
     {
 	    Button b = new Button(this);
-		b.setText(con.name);
+		b.setText(con.getName());
 		
 		ConOnClickListener click = new ConOnClickListener();
-		click.con_id = con.id;
+		click.con_id = con.getId();
 		
 		b.setOnClickListener(click);
 		

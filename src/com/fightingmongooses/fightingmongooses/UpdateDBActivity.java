@@ -70,7 +70,7 @@ public class UpdateDBActivity extends Activity {
 
 				db.createConferenceEntry(id, con.getString("name"), con.getString("description"),
 						con.getString("start_date"), con.getString("end_date"), 
-						con.getString("website"), con.getString("guests"), con.getString("twitter"));
+						con.getString("website"), con.getString("guests"), con.getString("twitter"), con.getString("gmaps"));
 			}
 			
 			for (int i = 0; i < json_events.length(); i++) {
@@ -78,8 +78,8 @@ public class UpdateDBActivity extends Activity {
 				int id = con.getInt("pk");
 				con = con.getJSONObject("fields");
 
-				db.createEventEntry(id, con.getString("name"), con.getString("time"), "PLACEHOLDER_PLACE",
-						"PLACEHOLDER_DURATION", con.getString("description"), con.getInt("conference"));
+				db.createEventEntry(id, con.getString("name"), con.getString("time"), con.getString("end_time"),
+						con.getString("location"), con.getString("description"), con.getInt("conference"));
 			}
 
 			
