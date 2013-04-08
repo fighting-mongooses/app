@@ -30,11 +30,13 @@ public class Database{
 	public static final String KEY_GUESTS="guests";
 	public static final String KEY_TWITTER="twitter";
 	public static final String KEY_GMAPS="gmaps";
+	public static final String KEY_PICTURE="picture";
 	
 	/* only this class can access these variables*/
 	private static final String DATABASE_NAME = "androkon_database"; // data base name is going to reference our database
 	private static final String EVENT_TABLE = "event_table";// in our database we can store different tables such as "Share_table"
 	private static final String CONFERENCE_TABLE = "conference_table";
+	private static final String MAP_TABLE = "map_table";
 	private static final int DATABASE_VERSION = 1;// to give the database a version, to allow updates
 	
 	
@@ -74,7 +76,14 @@ public class Database{
 					KEY_LOCATION+ " TEXT NOT NULL, "+
 					KEY_DESCRIPTION +" TEXT NOT NULL, "+
 					KEY_CONFERENCE+" INTEGER, "+
-					 " FOREIGN KEY ("+KEY_CONFERENCE+") REFERENCES "+CONFERENCE_TABLE+" ("+KEY_ROWID+"));"); 		        
+					" FOREIGN KEY ("+KEY_CONFERENCE+") REFERENCES "+CONFERENCE_TABLE+" ("+KEY_ROWID+"));");
+			
+			db.execSQL("CREATE TABLE " + MAP_TABLE + " ( " +
+					 KEY_ROWID + " INTEGER PRIMARY KEY NOT NULL, " +
+					 KEY_PICTURE + " TEXT NOT NULL, " +
+					 KEY_CONFERENCE+" INTEGER, "+
+					 " FOREIGN KEY ("+KEY_CONFERENCE+") REFERENCES "+CONFERENCE_TABLE+" ("+KEY_ROWID+"));");
+					
 		}
 		
 		/* if our table exists then we are going to drop it then call our onCreate method*/
@@ -83,6 +92,7 @@ public class Database{
 		
 				db.execSQL("DROP TABLE IF EXISTS " + EVENT_TABLE + ";");
 				db.execSQL("DROP TABLE IF EXISTS " + CONFERENCE_TABLE + ";");
+				db.execSQL("DROP TABLE IF EXISTS " + MAP_TABLE + ";");
 			
 				onCreate(db); // upgrade data base
 		
@@ -132,15 +142,8 @@ public class Database{
 	}
 	public static Date parseDjangoDate(String d)
 	{
-		Log.i("aassd", d);
 		if(d == "null"){
 			return null;
-		}
-		// Ignore Time Zone info - all times are in local time of con location
-		if(!d.endsWith("Z")){
-			int i;
-			for(i = d.length(); i != -1 && d.charAt(i) != '+' && d.charAt(i) != '-'; i++);
-			d = d.substring(0, i);	
 		}
 		
 		Date retval = null;
@@ -193,6 +196,16 @@ public class Database{
 		cv.put(KEY_DESCRIPTION, event_description);
 		cv.put(KEY_CONFERENCE, conference);
 		return ourDatabase.insert(EVENT_TABLE, null, cv); // inserts our puts into table
+	}
+	
+	public long createMapEntry(int id, String path, int conference)
+	{
+		ContentValues cv = new ContentValues();
+		cv.put(KEY_ROWID, id);
+		cv.put(KEY_PICTURE, path);
+		cv.put(KEY_CONFERENCE, conference);
+		
+		return ourDatabase.insert(MAP_TABLE, null, cv);
 	}
 	
 	private Conference[] cons = null;
@@ -287,6 +300,44 @@ public class Database{
 		return return_events;	
 	}
 	
+	private ConMap[] maps = null;
+	public ConMap[] getConMaps(int conId){
+		returnMaps();
+		
+		ArrayList<ConMap> conMaps = new ArrayList<ConMap>();
+		for(int i = 0; i != maps.length; i++){
+			if(maps[i].getCon() == conId)
+				conMaps.add(maps[i]);
+		}
+		
+		return conMaps.toArray(new ConMap[conMaps.size()]);
+	}
+	
+	public ConMap[] returnMaps(){
+		
+		if(maps != null)
+			return maps;
+	
+		Cursor c = ourDatabase.query(MAP_TABLE, null, null, null, null, null, null);
+	
+		int iId = c.getColumnIndex(KEY_ROWID);
+		int iPath = c.getColumnIndex(KEY_PICTURE);
+		int iCon = c.getColumnIndex(KEY_CONFERENCE);
+	
+		ConMap[] return_maps = new ConMap[c.getCount()];
+		
+		int rowcount = 0;
+		for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext())
+		{
+			return_maps[rowcount] = new ConMap(Integer.parseInt(c.getString(iId)), c.getString(iPath),
+												   Integer.parseInt(c.getString(iCon)));
+		    rowcount++;
+		}
+	
+		maps = return_maps;
+		
+		return return_maps;	
+	}
 	
 //	/* This is for if we want to expand to include more tables*/
 //	public String genericGetEntry(String tableName, String[] columns, String where){

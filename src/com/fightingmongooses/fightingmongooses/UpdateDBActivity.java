@@ -1,14 +1,22 @@
 package com.fightingmongooses.fightingmongooses;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.app.Activity;
 import android.view.Menu;
 import android.widget.TextView;
@@ -18,7 +26,23 @@ public class UpdateDBActivity extends Activity {
 	String appHost = "http://10.0.2.2:8000"; // This will always resolve to the
 												// computer running the android
 												// emulator
+	private JSONArray getJSON(String For) throws IOException, JSONException{
+		URL url = new URL(appHost + "/json_" + For);
+		InputStream is = url.openStream();
 
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				is, "iso-8859-1"), 8);
+		StringBuilder sb = new StringBuilder();
+
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line + "\n");
+		}
+		is.close();
+		
+		return new JSONArray(sb.toString());
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,37 +51,10 @@ public class UpdateDBActivity extends Activity {
 		Database db = null;
 		TextView t = (TextView) findViewById(R.id.test);
 		
-		try {			
-			URL url = new URL(appHost + "/json_cons");
-			InputStream is = url.openStream();
-
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					is, "iso-8859-1"), 8);
-			StringBuilder sb = new StringBuilder();
-
-			String line = null;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-			is.close();
-			
-			JSONArray json_cons = new JSONArray(sb.toString());
-			
-			
-			url = new URL(appHost + "/json_events");
-			is = url.openStream();
-			reader = new BufferedReader(new InputStreamReader(
-					is, "iso-8859-1"), 8);
-			sb = new StringBuilder();
-			line = null;
-			
-			while((line = reader.readLine()) != null)
-			{
-				sb.append(line + "\n");
-			}
-			is.close();
-			
-			JSONArray json_events = new JSONArray(sb.toString());
+		try {						
+			JSONArray json_cons = getJSON("cons");
+			JSONArray json_events = getJSON("events");
+			JSONArray json_maps = getJSON("maps");
 			
 			db = new Database(this);
 			db.open();
@@ -81,6 +78,62 @@ public class UpdateDBActivity extends Activity {
 				db.createEventEntry(id, con.getString("name"), con.getString("time"), con.getString("end_time"),
 						con.getString("location"), con.getString("description"), con.getInt("conference"));
 			}
+			
+
+			File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/androkon/media");
+			
+			// Clear out old pictures
+			try{
+				File[] files = dir.listFiles();
+				
+				if(files != null){
+					for(File f: files){
+						if(f.isFile()){
+							f.delete();
+						}
+					}
+				}
+			}
+			catch (Exception e) {}
+			
+            dir.mkdirs();
+            
+			
+			for (int i = 0; i < json_maps.length(); i++) {
+				JSONObject con = json_maps.getJSONObject(i);
+				int id = con.getInt("pk");
+				con = con.getJSONObject("fields");
+				
+				String fileName = con.getString("picture");
+				
+				
+				db.createMapEntry(id, fileName, con.getInt("con"));
+				
+				
+				URL url = new URL(appHost + "/static/" + fileName);
+				URLConnection ucon = url.openConnection();
+				ucon.setReadTimeout(5000);
+				ucon.setConnectTimeout(30000);
+				
+				InputStream is = ucon.getInputStream();
+	            BufferedInputStream inStream = new BufferedInputStream(is, 1024 * 5);
+	            
+	            
+	            FileOutputStream outStream = new FileOutputStream(
+	            		Environment.getExternalStorageDirectory().getPath() + "/androkon/" + fileName);
+	            byte[] buff = new byte[5 * 1024];
+
+	            int len;
+	            while ((len = inStream.read(buff)) != -1)
+	            {
+	                outStream.write(buff,0,len);
+	            }
+	            
+	            outStream.flush();
+	            outStream.close();
+	            inStream.close();
+
+			}
 
 			
 			// Display new cons to user
@@ -94,6 +147,11 @@ public class UpdateDBActivity extends Activity {
 			for (int i = 0; i < events.length; i++)
 				test += events[i] + "\n";
 
+			test += "Maps\n";
+			ConMap maps[] = db.returnMaps();
+			for (int i = 0; i < maps.length; i++)
+				test += maps[i] + "\n";
+			
 			t.setText(test);
 			
 
