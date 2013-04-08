@@ -34,13 +34,21 @@ public class ViewConAct extends Activity {
 		Database db = new Database(this);
 		db.open();
 		
-		String text = db.getCon(conId) + "\nEvents:\n";
+		
 		ConEvent[] conEvents = db.getConEvents(conId);
+		ConMap[] conMaps = db.getConMaps(conId);
+		
+		String text = db.getCon(conId) + "\nEvents:\n";
 		
 		db.close();
 		
+		
 		for(int i = 0; i != conEvents.length; i++)
 			text += conEvents[i];
+		
+		text += "\nMaps:\n";
+		for(int i = 0; i != conMaps.length; i++)
+			text += conMaps[i];
 		
 		setText(R.id.example_text, text);
 	}
